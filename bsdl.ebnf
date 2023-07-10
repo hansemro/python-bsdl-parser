@@ -45,7 +45,7 @@ decimal_pattern = /[1-9][0-9]+/ | /[0-9]/ ;
 string = "&".{quote [@:?/[A-Za-z0-9\&'\(\)\[\]\*\,\-\+\.\:\;\<\=\>\_\/\t ]+/?] quote} ;
 
 (* B.5.7 *)
-information_tag = /<[A-Za-z0-9\&'\(\)\[\]\*\,\-\+\.\:\;\=\_]+>/ ;
+information_tag = /<[A-Za-z0-9\&'\(\)\[\]\*\,\-\+\.\:\;\=\_\/\t ]+>/ ;
 
 (* B.6.2 *)
 port_id = subscripted_port_name | port_name ;
