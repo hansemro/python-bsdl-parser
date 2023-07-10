@@ -1,16 +1,16 @@
 # python-bsdl-parser
 
-This is a [Grako][Grako]-based parser for IEEE 1149.1 Boundary-Scan Description
+This is a [TatSu][TatSu]-based parser for IEEE 1149.1 Boundary-Scan Description
 Language (BSDL) files.
 
 ## Requirements
 
 * Python 3
-* [Grako 3.99.9][Grako]
+* [TatSu][TatSu]
 
 ## Usage
 
-First, install the Grako command from [here][Grako]. Then you can run `make` to
+First, install the TatSu command from [here][TatSu]. Then you can run `make` to
 generate the actual parser module (`bsdl.py`).
 
 After generating the parser module, run
@@ -18,4 +18,4 @@ After generating the parser module, run
 JSON.
 
 
-[Grako]: https://pypi.python.org/pypi/grako
+[TatSu]: https://pypi.python.org/pypi/tatsu

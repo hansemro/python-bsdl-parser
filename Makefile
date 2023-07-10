@@ -1,2 +1,2 @@
 bsdl.py: bsdl.ebnf
-	grako --name bsdl -o $@ $^
+	tatsu --name bsdl -o $@ $^

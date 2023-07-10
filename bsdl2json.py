@@ -17,30 +17,17 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-
 import json
 import sys
-
+from tatsu.util import asjson
 import bsdl
 
-
-class BsdlSemantics:
-    def map_string(self, ast):
-        parser = bsdl.bsdlParser()
-        ast = parser.parse(''.join(ast), "port_map")
-        return ast
-
-    def grouped_port_identification(self, ast):
-        parser = bsdl.bsdlParser()
-        ast = parser.parse(''.join(ast), "group_table")
-        return ast
-
 def main(filename):
-    with open(filename) as f:
+    with open(filename, "r") as f:
         text = f.read()
         parser = bsdl.bsdlParser()
-        ast = parser.parse(text, "bsdl_description", semantics=BsdlSemantics(), parseinfo=False)
-        print(json.dumps(ast.asjson()))
+        ast = parser.parse(text, start="bsdl_description")
+        print(json.dumps(asjson(ast)))
 
 
 if __name__ == "__main__":
