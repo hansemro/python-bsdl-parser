@@ -239,9 +239,17 @@ thirty_two_bit_pattern_list = @:thirty_two_bit_pattern {comma [@:thirty_two_bit_
 (* B.8.13 *)
 register_access_description = "attribute" "REGISTER_ACCESS" "of"
     component_name colon "entity" "is" @:register_access_string semicolon ;
-register_access_string = "&".{quote @+:register_association {comma [@+:register_association]} quote} ;
-register_association = register:register left_paren instruction_capture_list:instruction_capture_list right_paren ;
-instruction_capture_list = (comma).{instruction_capture} ;
+register_access_string = quote (end_and_open).{([end_and_open] comma [end_and_open]).{@+:register_association}} quote ;
+register_association =
+    [end_and_open]
+    register:register
+    [end_and_open]
+    left_paren
+    [end_and_open]
+    instruction_capture_list:instruction_capture_list
+    [end_and_open]
+    right_paren ;
+instruction_capture_list = ([end_and_open] comma [end_and_open]).{instruction_capture} ;
 instruction_capture = instruction_name:instruction_name [ "CAPTURES" pattern:pattern ] ;
 register = reg_name:std_fixed_register | @:std_var_register | @:design_specific_register ;
 std_fixed_register = "BOUNDARY" | "BYPASS" | "DEVICE_ID" | "TMP_STATUS" ;
