@@ -188,10 +188,23 @@ halt_state_value = "LOW" | "BOTH" ;
 (* B.8.10 *)
 compliance_enable_description = "attribute" "COMPLIANCE_PATTERNS" "of"
     component_name colon "entity" "is" compliance_patterns:compliance_pattern_string semicolon ;
-compliance_pattern_string = "&".{quote left_paren compliance_port_list:compliance_port_list right_paren
-    left_paren pattern_list:pattern_list right_paren quote} ;
-compliance_port_list = (comma).{port_id} ;
-pattern_list = (comma).{pattern} ;
+compliance_pattern_string = quote
+    (end_and_open).{
+        [end_and_open]
+        left_paren
+        [end_and_open]
+        compliance_port_list:compliance_port_list
+        [end_and_open]
+        right_paren
+        [end_and_open]
+        left_paren
+        [end_and_open]
+        pattern_list:pattern_list
+        [end_and_open]
+        right_paren}
+    quote ;
+compliance_port_list = ([end_and_open] comma [end_and_open]).{port_id} ;
+pattern_list = ([end_and_open] comma [end_and_open]).{pattern} ;
 
 (* B.8.11 *)
 instruction_register_description =
