@@ -106,8 +106,8 @@ pin_type = "in" | "out" | "buffer" | "inout" | "LINKAGE_INOUT" |
 port_dimension = bit_vector_spec | "bit" ;
 bit_vector_spec  = "bit_vector" left_paren bit_vector:range right_paren ;
 range = up_range | down_range ;
-up_range = integer1 "to" integer2 ;
-down_range = integer2 "downto" integer1 ;
+up_range = lower:integer1 "to" upper:integer2 ;
+down_range = upper:integer2 "downto" lower:integer1 ;
 integer1 = integer ;
 integer2 = integer ;
 
