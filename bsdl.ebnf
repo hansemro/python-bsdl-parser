@@ -343,13 +343,30 @@ intest_spec_string = quote
 
 (* B.8.17 *)
 system_clock_description = "attribute" "SYSCLOCK_REQUIREMENTS"
-    "of" entity_target "is" system_clock_description_string semicolon ;
-system_clock_description_string = "&".{quote system_clock_requirement {comma [system_clock_requirement]} quote} ;
-system_clock_requirement = left_paren port_id comma min_freq comma max_freq
-    comma clocked_instructions right_paren ;
+    "of" entity_target "is" @:system_clock_description_string semicolon ;
+system_clock_description_string = quote (end_and_open).{({end_and_open} comma {end_and_open}).{@:system_clock_requirement}} quote ;
+system_clock_requirement =
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    port_id:port_id
+    {end_and_open}
+    comma
+    {end_and_open}
+    min_freq:min_freq
+    {end_and_open}
+    comma
+    {end_and_open}
+    max_freq:max_freq
+    {end_and_open}
+    comma
+    {end_and_open}
+    clocked_instructions:clocked_instructions
+    {end_and_open}
+    right_paren ;
 min_freq = real ;
 max_freq = real ;
-clocked_instructions = (comma).{clocked_instruction} ;
+clocked_instructions = ({end_and_open} comma {end_and_open}).{@+:clocked_instruction} ;
 clocked_instruction = "RUNBIST" | "INTEST" | "INIT_SETUP" |
     "INIT_SETUP_CLAMP" | "INIT_RUN" | "ECIDCODE" | "IC_RESET" | vhdl_identifier ;
 
