@@ -81,8 +81,8 @@ bsdl_description = "entity" component_name:component_name "is"
     {register_constraints_description:register_constraints_description}
     {register_association_description:register_association_description}
     {power_port_association_description:power_port_association_description}
-    {bsdl_extensions:bsdl_extensions}
     [design_warning:design_warning]
+    {bsdl_extensions:bsdl_extensions}
     "end" component_name semicolon ;
 
 component_name = vhdl_identifier ;
