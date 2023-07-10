@@ -152,7 +152,8 @@ grouped_port_identification = "attribute" "PORT_GROUPING" "of"
     component_name colon "entity" "is" @:group_table_string semicolon ;
 group_table_string = "&".{quote @:group_table quote} ;
 group_table = ({end_and_open} comma {end_and_open}).{@+:twin_group_entry} ;
-twin_group_entry = twin_group_type:twin_group_type
+twin_group_entry = {end_and_open}
+    twin_group_type:twin_group_type
     {end_and_open}
     left_paren
     {end_and_open}
@@ -161,7 +162,8 @@ twin_group_entry = twin_group_type:twin_group_type
     right_paren ;
 twin_group_type = "DIFFERENTIAL_VOLTAGE" | "DIFFERENTIAL_CURRENT" ;
 twin_group_list = ({end_and_open} comma {end_and_open}).{@+:twin_group} ;
-twin_group = left_paren
+twin_group = {end_and_open}
+    left_paren
     {end_and_open}
     representative_port:representative_port
     {end_and_open}
