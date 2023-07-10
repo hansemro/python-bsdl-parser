@@ -402,10 +402,23 @@ pattern_specification = binary_pattern | hex_pattern | decimal_pattern | "others
 
 (* B.8.19 *)
 register_fields_description = "attribute" "REGISTER_FIELDS" "of" target "is"
-    register_fields_string semicolon ;
-register_fields_string = "&".{quote register_field_list {comma [register_field_list]} quote} ;
-register_field_list = reg_or_seg_name left_bracket reg_or_seg_length right_bracket
-    left_paren register_fields right_paren ;
+    @:register_fields_string semicolon ;
+register_fields_string = quote (end_and_open).{({end_and_open} comma {end_and_open}).{@+:register_field_list}} quote ;
+register_field_list =
+    {end_and_open}
+    reg_or_seg_name:reg_or_seg_name
+    {end_and_open}
+    left_bracket
+    {end_and_open}
+    length:reg_or_seg_length
+    {end_and_open}
+    right_bracket
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    fields:register_fields
+    {end_and_open}
+    right_paren ;
 reg_or_seg_name = tdr | segment_name ;
 tdr = "BOUNDARY" | "BYPASS" | "DEVICE_ID" | "TMP_STATUS" |
     "ECID" | "INIT_DATA" | "INIT_STATUS" | "RESET_SELECT" |
@@ -413,17 +426,31 @@ tdr = "BOUNDARY" | "BYPASS" | "DEVICE_ID" | "TMP_STATUS" |
 segment_name = vhdl_identifier ;
 design_specific_tdr_name = vhdl_identifier ;
 reg_or_seg_length = integer ;
-register_fields = (comma).{left_paren register_field_element right_paren} ;
+register_fields = ({end_and_open} comma {end_and_open}).{
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    @+:register_field_element
+    {end_and_open}
+    right_paren} ;
 register_field_element = register_field | prefix_statement ;
-register_field = extended_field_name field_length "is" bit_list_and_options ;
-extended_field_name = prefix_string field_name ;
+register_field =
+    {end_and_open}
+    field_name:extended_field_name
+    {end_and_open}
+    length:field_length
+    {end_and_open}
+    "is"
+    {end_and_open}
+    bit_list_and_options:bit_list_and_options ;
+extended_field_name = prefix:prefix_string name:field_name ;
 prefix_string = { prefix_identifier period } ;
 field_name = vhdl_identifier ;
-field_length = left_bracket integer right_bracket ;
-bit_list_and_options = bit_list { field_options } ;
+field_length = left_bracket @:integer right_bracket ;
+bit_list_and_options = bit_list:bit_list {end_and_open} { options:field_options } ;
 field_options = type_assignment | value_assignment | reset_assignment ;
-bit_list = left_paren [ (comma).{bit_field} ] right_paren ;
-bit_field = range | integer ;
+bit_list = left_paren [ (comma).{@+:bit_field} ] right_paren ;
+bit_field = range:range | index:integer ;
 prefix_statement = "PREFIX" integer prefix_name ;
 prefix_name = prefix_identifier | minus_sign ;
 
