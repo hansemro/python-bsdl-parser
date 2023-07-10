@@ -138,7 +138,12 @@ pin_mapping_name = vhdl_identifier ;
 map_string = quote ([end_and_open] comma [end_and_open]).{@+:port} quote ;
 port = port_name:port_name colon pin_list:pin_or_list ;
 pin_or_list = @+:pin_desc | @:pin_list ;
-pin_list = left_paren ([end_and_open] comma [end_and_open]).{@:pin_desc} right_paren ;
+pin_list = [end_and_open]
+    left_paren
+    [end_and_open]
+    ([end_and_open] comma [end_and_open]).{@:pin_desc}
+    [end_and_open]
+    right_paren ;
 pin_desc = "OPEN" | "TIE0" | "TIE1" | pin_id ;
 pin_id = integer | vhdl_identifier ;
 
