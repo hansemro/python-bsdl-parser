@@ -135,14 +135,14 @@ pin_mappings = { pin_mapping }+ ;
 pin_mapping = "constant" pin_mapping_name:pin_mapping_name colon "PIN_MAP_STRING" ":="
     pin_map:map_string semicolon ;
 pin_mapping_name = vhdl_identifier ;
-map_string = quote ([end_and_open] comma [end_and_open]).{@+:port} quote ;
+map_string = quote ({end_and_open} comma {end_and_open}).{@+:port} quote ;
 port = port_name:port_name colon pin_list:pin_or_list ;
 pin_or_list = @+:pin_desc | @:pin_list ;
-pin_list = [end_and_open]
+pin_list = {end_and_open}
     left_paren
-    [end_and_open]
-    ([end_and_open] comma [end_and_open]).{@:pin_desc}
-    [end_and_open]
+    {end_and_open}
+    ({end_and_open} comma {end_and_open}).{@:pin_desc}
+    {end_and_open}
     right_paren ;
 pin_desc = "OPEN" | "TIE0" | "TIE1" | pin_id ;
 pin_id = integer | vhdl_identifier ;
@@ -151,24 +151,24 @@ pin_id = integer | vhdl_identifier ;
 grouped_port_identification = "attribute" "PORT_GROUPING" "of"
     component_name colon "entity" "is" @:group_table_string semicolon ;
 group_table_string = "&".{quote @:group_table quote} ;
-group_table = ([end_and_open] comma [end_and_open]).{@+:twin_group_entry} ;
+group_table = ({end_and_open} comma {end_and_open}).{@+:twin_group_entry} ;
 twin_group_entry = twin_group_type:twin_group_type
-    [end_and_open]
+    {end_and_open}
     left_paren
-    [end_and_open]
+    {end_and_open}
     twin_group_list:twin_group_list
-    [end_and_open]
+    {end_and_open}
     right_paren ;
 twin_group_type = "DIFFERENTIAL_VOLTAGE" | "DIFFERENTIAL_CURRENT" ;
-twin_group_list = ([end_and_open] comma [end_and_open]).{@+:twin_group} ;
+twin_group_list = ({end_and_open} comma {end_and_open}).{@+:twin_group} ;
 twin_group = left_paren
-    [end_and_open]
+    {end_and_open}
     representative_port:representative_port
-    [end_and_open]
+    {end_and_open}
     comma
-    [end_and_open]
+    {end_and_open}
     associated_port:associated_port
-    [end_and_open]
+    {end_and_open}
     right_paren ;
 representative_port = port_id ;
 associated_port = port_id ;
@@ -190,21 +190,21 @@ compliance_enable_description = "attribute" "COMPLIANCE_PATTERNS" "of"
     component_name colon "entity" "is" compliance_patterns:compliance_pattern_string semicolon ;
 compliance_pattern_string = quote
     (end_and_open).{
-        [end_and_open]
+        {end_and_open}
         left_paren
-        [end_and_open]
+        {end_and_open}
         compliance_port_list:compliance_port_list
-        [end_and_open]
+        {end_and_open}
         right_paren
-        [end_and_open]
+        {end_and_open}
         left_paren
-        [end_and_open]
+        {end_and_open}
         pattern_list:pattern_list
-        [end_and_open]
+        {end_and_open}
         right_paren}
     quote ;
-compliance_port_list = ([end_and_open] comma [end_and_open]).{port_id} ;
-pattern_list = ([end_and_open] comma [end_and_open]).{pattern} ;
+compliance_port_list = ({end_and_open} comma {end_and_open}).{port_id} ;
+pattern_list = ({end_and_open} comma {end_and_open}).{pattern} ;
 
 (* B.8.11 *)
 instruction_register_description =
@@ -220,12 +220,12 @@ instruction_capture_stmt = "attribute" "INSTRUCTION_CAPTURE" "of" component_name
     colon "entity" "is" @:pattern_list_string semicolon ;
 instruction_private_stmt = "attribute" "INSTRUCTION_PRIVATE" "of" component_name
     colon "entity" "is" @:instruction_list_string semicolon ;
-opcode_table_string = quote (end_and_open).{([end_and_open] comma [end_and_open]).{@+:opcode_description} } quote;
+opcode_table_string = quote (end_and_open).{({end_and_open} comma {end_and_open}).{@+:opcode_description} } quote;
 opcode_description = instruction_name:instruction_name left_paren opcode_list:opcode_list right_paren ;
-opcode_list = ([end_and_open] comma [end_and_open]).{@+:opcode} ;
+opcode_list = ({end_and_open} comma {end_and_open}).{@+:opcode} ;
 opcode = pattern ;
 pattern_list_string = quote (end_and_open).{@:opcode_list} quote;
-instruction_list_string = quote (end_and_open).{([end_and_open] comma [end_and_open]).{@:instruction_name}} quote;
+instruction_list_string = quote (end_and_open).{({end_and_open} comma {end_and_open}).{@:instruction_name}} quote;
 
 (* B.8.12 *)
 optional_register_description = optional_register_stmt [ optional_register_stmt ] ;
@@ -239,17 +239,17 @@ thirty_two_bit_pattern_list = @:thirty_two_bit_pattern {comma [@:thirty_two_bit_
 (* B.8.13 *)
 register_access_description = "attribute" "REGISTER_ACCESS" "of"
     component_name colon "entity" "is" @:register_access_string semicolon ;
-register_access_string = quote (end_and_open).{([end_and_open] comma [end_and_open]).{@+:register_association}} quote ;
+register_access_string = quote (end_and_open).{({end_and_open} comma {end_and_open}).{@+:register_association}} quote ;
 register_association =
-    [end_and_open]
+    {end_and_open}
     register:register
-    [end_and_open]
+    {end_and_open}
     left_paren
-    [end_and_open]
+    {end_and_open}
     instruction_capture_list:instruction_capture_list
-    [end_and_open]
+    {end_and_open}
     right_paren ;
-instruction_capture_list = ([end_and_open] comma [end_and_open]).{instruction_capture} ;
+instruction_capture_list = ({end_and_open} comma {end_and_open}).{instruction_capture} ;
 instruction_capture = instruction_name:instruction_name [ "CAPTURES" pattern:pattern ] ;
 register = reg_name:std_fixed_register | @:std_var_register | @:design_specific_register ;
 std_fixed_register = "BOUNDARY" | "BYPASS" | "DEVICE_ID" | "TMP_STATUS" ;
