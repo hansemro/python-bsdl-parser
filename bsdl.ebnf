@@ -267,7 +267,7 @@ boundary_length_stmt = "attribute" "BOUNDARY_LENGTH" "of"
 register_length = integer ;
 boundary_register_stmt = "attribute" "BOUNDARY_REGISTER" "of"
     component_name colon "entity" "is" @:cell_table_string semicolon ;
-cell_table_string = "&".{quote @:cell_table quote} ;
+cell_table_string = quote (end_and_open).{@:cell_table} quote;
 assembled_boundary_length_stmt = "attribute" "ASSEMBLED_BOUNDARY_LENGTH" "of"
     component_name colon "entity" "is"
     left_paren reset_length:reset_length comma boundary_length:register_length right_paren semicolon ;
@@ -281,8 +281,16 @@ boundary_segment_list = segment_name:boundary_segment_name
     left_paren cell_table:cell_table right_paren ;
 boundary_segment_name = vhdl_identifier ;
 boundary_segment_length = integer ;
-cell_table = @:cell_entry {comma [@:cell_entry]} ;
-cell_entry = cell_number:cell_number left_paren cell_info:cell_info right_paren ;
+cell_table = ({end_and_open} comma {end_and_open}).{@:cell_entry} ;
+cell_entry =
+    {end_and_open}
+    cell_number:cell_number
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    cell_info:cell_info
+    {end_and_open}
+    right_paren ;
 cell_number = integer ;
 cell_info = cell_spec:cell_spec [ comma input_or_disable_spec:input_or_disable_spec ] ;
 cell_spec = cell_name:cell_name comma port_id:port_id_or_null comma function:function comma safe_bit:safe_bit ;
