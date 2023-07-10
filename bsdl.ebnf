@@ -372,16 +372,32 @@ clocked_instruction = "RUNBIST" | "INTEST" | "INIT_SETUP" |
 
 (* B.8.18 *)
 register_mnemonics_description = "attribute" "REGISTER_MNEMONICS" "of"
-    target "is" register_mnemonics_string semicolon ;
+    target "is" @:register_mnemonics_string semicolon ;
 target = entity_target | package_target ;
 entity_target = component_name colon "entity" ;
 package_target = user_package_name colon "package" ;
-register_mnemonics_string = "&".{quote mnemonic_definition {comma [mnemonic_definition]} quote} ;
-mnemonic_definition = mnemonic_group_name left_paren mnemonic_list right_paren ;
+register_mnemonics_string = quote (end_and_open).{({end_and_open} comma {end_and_open}).{@:mnemonic_definition}} quote;
+mnemonic_definition =
+    {end_and_open}
+    group_name:mnemonic_group_name
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    mnemonic_list:mnemonic_list
+    {end_and_open}
+    right_paren ;
 mnemonic_group_name = vhdl_identifier ;
-mnemonic_list = (comma).{mnemonic_assignment} ;
-mnemonic_assignment = mnemonic_identifier
-    left_paren pattern_specification right_paren [ information_tag ] ;
+mnemonic_list = ({end_and_open} comma {end_and_open}).{@+:mnemonic_assignment} ;
+mnemonic_assignment =
+    identifier:mnemonic_identifier
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    pattern:pattern_specification
+    {end_and_open}
+    right_paren
+    {end_and_open}
+    [ information_tag:information_tag ] ;
 pattern_specification = binary_pattern | hex_pattern | decimal_pattern | "others" ;
 
 (* B.8.19 *)
