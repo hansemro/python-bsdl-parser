@@ -455,7 +455,7 @@ prefix_statement = "PREFIX" integer prefix_name ;
 prefix_name = prefix_identifier | minus_sign ;
 
 (* B.8.20 *)
-value_assignment = value_keyword left_paren assignment right_paren ;
+value_assignment = keyword:value_keyword left_paren assignment:assignment right_paren ;
 value_keyword = "CAPTURES" | "DEFAULT" | "SAFE" | "RESETVAL" | user_extension ;
 user_extension = "USER" colon user_keyword ;
 user_keyword = vhdl_identifier ;
@@ -477,62 +477,220 @@ association_name = vhdl_identifier ;
 
 (* B.8.21 *)
 register_assembly_description = "attribute" "REGISTER_ASSEMBLY" "of" target "is"
-    register_assembly_string semicolon ;
-register_assembly_string = "&".{quote register_assembly_list {comma [register_assembly_list]} quote} ;
-register_assembly_list = reg_or_seg_name left_paren register_assembly_elements right_paren ;
-register_assembly_elements = (comma).{left_paren register_element right_paren} ;
-register_element = instance_and_options | field_and_options | instance_reference |
-    selected_segment_element | boundary_instance | using_statement ;
-instance_and_options = instance_definition { field_assignments } ;
-instance_definition = instance_ident "is" [ "PACKAGE" package_hierarchy colon ]
-    reg_or_seg_name ;
-instance_ident = segment_ident | array_ident ;
-segment_ident = vhdl_identifier ;
-array_ident = "ARRAY" array_segment_ident left_paren range right_paren ;
-array_segment_ident = vhdl_identifier ;
-field_assignments = field_value_assignment | field_reset_assignment |
-    field_domain_assignment | field_selection_assignment ;
-field_value_assignment = [ field_ident colon ] value_assignment ;
-field_reset_assignment = [ field_ident colon ] reset_assignment ;
-field_domain_assignment = [ field_ident colon ] domain_assignment ;
-field_ident = { instance_name period } field_name ;
-instance_name = segment_ident | array_instances ;
-array_instances = array_segment_ident bit_list ;
-field_and_options = field_name field_length { field_options } ;
-instance_reference = segment_ident | array_instance ;
-array_instance = array_segment_ident left_paren index right_paren ;
+    @:register_assembly_string semicolon ;
+register_assembly_string = quote (end_and_open).{({end_and_open} comma {end_and_open}).{@:register_assembly_list}} quote ;
+register_assembly_list =
+    {end_and_open}
+    reg_or_seg_name:reg_or_seg_name
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    register_assembly_elements:register_assembly_elements
+    {end_and_open}
+    right_paren ;
+register_assembly_elements = ({end_and_open} comma {end_and_open}).{left_paren {end_and_open} @+:register_element {end_and_open} right_paren} ;
+register_element =
+    instance_and_options
+    | field_and_options
+    | selected_segment_element
+    | using_statement
+    | boundary_instance
+    | instance_reference ;
+instance_and_options = instance_definition:instance_definition { field_assignments:field_assignment } ;
+instance_definition = instance:instance_ident
+    {end_and_open}
+    "is"
+    [
+        {end_and_open}
+        "PACKAGE"
+        {end_and_open}
+        package:package_hierarchy
+        {end_and_open}
+        colon
+    ]
+    {end_and_open}
+    reg_or_seg_name:reg_or_seg_name ;
+instance_ident = @:array_ident | @:segment_ident ;
+segment_ident = @:vhdl_identifier ;
+array_ident =
+    {end_and_open}
+    "ARRAY"
+    {end_and_open}
+    ident:array_segment_ident
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    range:range
+    {end_and_open}
+    right_paren ;
+array_segment_ident = @:vhdl_identifier ;
+field_assignment = @:field_value_assignment | @:field_reset_assignment |
+    @:field_domain_assignment | @:field_selection_assignment ;
+field_value_assignment =
+    {end_and_open}
+    [ field_ident:field_ident {end_and_open} colon {end_and_open} ]
+    value_assignment:value_assignment ;
+field_reset_assignment =
+    {end_and_open}
+    [ field_ident:field_ident {end_and_open} colon {end_and_open} ]
+    reset_assignment:reset_assignment ;
+field_domain_assignment =
+    {end_and_open}
+    [ field_ident:field_ident {end_and_open} colon {end_and_open} ]
+    domain_assignment:domain_assignment ;
+field_ident = { instance_name+:instance_name period } field_name:field_name ;
+instance_name = @:segment_ident | @:array_instances ;
+array_instances =
+    {end_and_open}
+    ident:array_segment_ident
+    {end_and_open}
+    bit_list:bit_list ;
+field_and_options =
+    {end_and_open}
+    field_name:field_name
+    {end_and_open}
+    length:field_length
+    {{end_and_open} options+:field_options } ;
+instance_reference = @:segment_ident | @:array_instance ;
+array_instance =
+    {end_and_open}
+    ident:array_segment_ident
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    index:index
+    {end_and_open}
+    right_paren ;
 index = integer ;
-selected_segment_element = "SELECTMUX"
-    (comma).{left_paren selectable_segment right_paren}
-    field_selection_assignment ;
-selectable_segment = instance_and_options | instance_reference ;
-field_selection_assignment = selection_field selection_values
-    [ broadcast_field broadcast_values ] ;
-selection_field = "SELECTFIELD" left_paren field_reference right_paren ;
-field_reference = { instance_reference period } field_name ;
-selection_values = "SELECTVALUES" left_paren segment_selection
-    { segment_selection } right_paren ;
-segment_selection = left_paren instance_reference colon (comma).{field_value} right_paren ;
-field_value = mnemonic_identifier | binary_pattern | hex_pattern | decimal_pattern ;
-broadcast_field = "BROADCASTFIELD" left_paren field_reference right_paren ;
-broadcast_values = "BROADCASTVALUES" left_paren broadcast_selection
-    { broadcast_selection } right_paren ;
-broadcast_selection = left_paren (comma).{instance_reference}
-    colon (comma).{field_value} right_paren ;
-boundary_instance = segment_ident "is"
-    [ "PACKAGE" package_hierarchy colon ] boundary_segment_name ;
-using_statement = "USING" package_prefix ;
+selected_segment_element =
+    {end_and_open}
+    "SELECTMUX"
+    {end_and_open}
+    ({end_and_open} comma {end_and_open}).{
+        left_paren
+        {end_and_open}
+        selectable_segment:selectable_segment
+        {end_and_open}
+        right_paren
+    }
+    {end_and_open}
+    field_selection_assignment:field_selection_assignment ;
+selectable_segment = @:instance_and_options | @:instance_reference ;
+field_selection_assignment =
+    {end_and_open}
+    selection_field:selection_field
+    {end_and_open}
+    selection_values:selection_values
+    [
+        {end_and_open}
+        broadcast_field:broadcast_field
+        {end_and_open}
+        broadcast_values:broadcast_values
+    ] ;
+selection_field =
+    {end_and_open}
+    "SELECTFIELD"
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    field_reference:field_reference
+    {end_and_open}
+    right_paren ;
+field_reference = { instance_reference:instance_reference period } field_name:field_name ;
+selection_values =
+    {end_and_open}
+    "SELECTVALUES"
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    ({end_and_open}).{@+:segment_selection}
+    right_paren ;
+segment_selection =
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    instance_reference:instance_reference
+    {end_and_open}
+    colon
+    {end_and_open}
+    ({end_and_open} comma {end_and_open}).{field_value+:field_value}
+    {end_and_open}
+    right_paren ;
+field_value = @:mnemonic_identifier | @:binary_pattern | @:hex_pattern | @:decimal_pattern ;
+broadcast_field =
+    {end_and_open}
+    "BROADCASTFIELD"
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    field_reference:field_reference
+    {end_and_open}
+    right_paren ;
+broadcast_values =
+    {end_and_open}
+    "BROADCASTVALUES"
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    ({end_and_open}).{@+:broadcast_selection}
+    right_paren ;
+broadcast_selection =
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    ({end_and_open} comma {end_and_open}).{instance_reference}
+    {end_and_open}
+    colon
+    {end_and_open}
+    ({end_and_open} comma {end_and_open}).{field_value}
+    {end_and_open}
+    right_paren ;
+boundary_instance =
+    {end_and_open}
+    segment_ident:segment_ident
+    {end_and_open}
+    "is"
+    {end_and_open}
+    [
+        "PACKAGE"
+        {end_and_open}
+        package_hierarchy:package_hierarchy
+        {end_and_open}
+        colon
+        {end_and_open}
+    ]
+    boundary_segment_name:boundary_segment_name ;
+using_statement = {end_and_open} "USING" {end_and_open} package_prefix:package_prefix ;
 package_prefix = package_hierarchy | minus_sign ;
-package_hierarchy = user_package_name { period user_package_name } ;
+package_hierarchy = ({end_and_open} @+:period {end_and_open}).{@+:user_package_name } ;
 
 (* B.8.22 *)
 register_constraints_description = "attribute" "REGISTER_CONSTRAINTS" "of" target "is"
-    constraints_string semicolon ;
-constraints_string = "&".{quote constraints_list {comma [constraints_list]} quote} ;
-constraints_list = constraint_domain left_paren constraint_checks right_paren ;
+    @:constraints_string semicolon ;
+constraints_string = quote ({end_and_open}).{({end_and_open} comma {end_and_open}).{@:constraints_list}} quote;
+constraints_list =
+    {end_and_open}
+    constraint_domain:constraint_domain
+    {end_and_open}
+    left_paren
+    {end_and_open}
+    constraint_checks:constraint_checks
+    {end_and_open}
+    right_paren ;
 constraint_domain = reg_or_seg_name | "entity" | "package" ;
-constraint_checks = (comma).{left_paren check_expression right_paren
-    constraint_severity information_tag} ;
+constraint_checks =
+    {end_and_open}
+    ({end_and_open} comma {end_and_open}).{
+        left_paren
+        {end_and_open}
+        check_expression:check_expression
+        {end_and_open}
+        right_paren
+        {end_and_open}
+        constraint_severity:constraint_severity
+        {end_and_open}
+        information_tag:information_tag
+    } ;
 constraint_severity = "error" | "warning" | "info" ;
 check_expression = short_expression | binary_expr ;
 short_expression = nested_expr | unary_expr | field_reference | oper_val ;
