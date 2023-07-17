@@ -135,11 +135,20 @@ pin_mappings = { pin_mapping }+ ;
 pin_mapping = "constant" pin_mapping_name:pin_mapping_name colon "PIN_MAP_STRING" ":="
     pin_map:map_string semicolon ;
 pin_mapping_name = vhdl_identifier ;
-map_string = string ;
-port_map = (comma).{[port]} ;
-port = port_name:port_name colon pin_list:pin_or_list ;
+map_string = quote {end_and_start} @:port_map quote ;
+port_map = ({end_and_start} comma {end_and_start}).{port} ;
+port =
+    port_name:port_name
+    {end_and_start}
+    colon
+    {end_and_start}
+    pin_list:pin_or_list ;
 pin_or_list = @+:pin_desc | @:pin_list ;
-pin_list = left_paren (comma).{[@:pin_desc]} right_paren ;
+pin_list =
+    left_paren
+    {end_and_start}
+    ({end_and_start} comma {end_and_start}).{@:pin_desc}
+    right_paren ;
 pin_desc = "OPEN" | "TIE0" | "TIE1" | pin_id ;
 pin_id = integer | vhdl_identifier ;
 
