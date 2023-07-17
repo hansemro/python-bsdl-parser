@@ -155,12 +155,28 @@ pin_id = integer | vhdl_identifier ;
 (* B.8.8 *)
 grouped_port_identification = "attribute" "PORT_GROUPING" "of"
     component_name colon "entity" "is" @:group_table_string semicolon ;
-group_table_string = string ;
-group_table = (comma).{[twin_group_entry]} ;
-twin_group_entry = twin_group_type:twin_group_type left_paren twin_group_list:twin_group_list right_paren ;
+group_table_string = quote {end_and_start} @:group_table quote ;
+group_table = ({end_and_start} comma {end_and_start}).{twin_group_entry} ;
+twin_group_entry =
+    twin_group_type:twin_group_type
+    {end_and_start}
+    left_paren
+    {end_and_start}
+    twin_group_list:twin_group_list
+    {end_and_start}
+    right_paren ;
 twin_group_type = "DIFFERENTIAL_VOLTAGE" | "DIFFERENTIAL_CURRENT" ;
-twin_group_list = (comma).{[twin_group]} ;
-twin_group = left_paren representative_port:representative_port comma associated_port:associated_port right_paren ;
+twin_group_list = ({end_and_start} comma {end_and_start}).{twin_group} ;
+twin_group =
+    left_paren
+    {end_and_start}
+    representative_port:representative_port
+    {end_and_start}
+    comma
+    {end_and_start}
+    associated_port:associated_port
+    {end_and_start}
+    right_paren ;
 representative_port = port_id ;
 associated_port = port_id ;
 
