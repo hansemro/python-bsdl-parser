@@ -230,9 +230,23 @@ instruction_capture_stmt = "attribute" "INSTRUCTION_CAPTURE" "of" component_name
     colon "entity" "is" @:pattern_list_string semicolon ;
 instruction_private_stmt = "attribute" "INSTRUCTION_PRIVATE" "of" component_name
     colon "entity" "is" @:instruction_list_string semicolon ;
-opcode_table_string = "&".{quote (comma).{[@+:opcode_description]} quote} ;
-opcode_description = instruction_name:instruction_name left_paren opcode_list:opcode_list right_paren ;
-opcode_list = (comma).{[@+:opcode]} ;
+opcode_table_string =
+    "&".{
+        quote
+        {end_and_start}
+        ({end_and_start} comma {end_and_start}).{@+:opcode_description}
+        {end_and_start}
+        quote
+    } ;
+opcode_description =
+    instruction_name:instruction_name
+    {end_and_start}
+    left_paren
+    {end_and_start}
+    opcode_list:opcode_list
+    {end_and_start}
+    right_paren ;
+opcode_list = ({end_and_start} comma {end_and_start}).{@+:opcode} ;
 opcode = pattern ;
 pattern_list_string = "&".{quote @:opcode_list quote} ;
 instruction_list_string = "&".{quote @:instruction_list quote} ;
