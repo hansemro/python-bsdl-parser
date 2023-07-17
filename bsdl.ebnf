@@ -541,3 +541,4 @@ right_brace = "}";
 right_bracket = "]";
 right_paren = ")";
 semicolon = ";";
+end_and_start = quote '&' quote ;
