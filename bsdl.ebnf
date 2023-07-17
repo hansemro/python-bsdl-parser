@@ -19,6 +19,9 @@
 
 @@ignorecase :: True
 @@eol_comments :: /--.*?$/
+@@parseinfo :: False
+
+start = bsdl_description $;
 
 (* B.5.1 *)
 letters = /[A-Za-z]/ ;
