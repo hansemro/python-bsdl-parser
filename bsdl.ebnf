@@ -36,7 +36,7 @@ prefix_identifier = /[a-zA-Z][a-zA-Z0-9_]*/ ;
 integer = /[0-9]+/;
 real = /[0-9]+\.[0-9]+([Ee][+-]?)?[0-9]*/ ;
 pattern = /[01Xx]+/ ;
-thirty_two_bit_pattern = "&".{@:/[01Xx]+/} ;
+thirty_two_bit_pattern = (!(comma) {end_and_start}+ !(comma)).{@+:/[01Xx]+/} ;
 binary_pattern = /0[bB][01xX][01xX_]*/ ;
 hex_pattern = /0[xX][0-9a-fA-FxX][0-9a-fA-FxX_]*/ ;
 decimal_pattern = /[0-9]/ | /[1-9][0-9]+/ ;
@@ -256,10 +256,10 @@ instruction_list = ({end_and_start} comma {end_and_start}).{@:instruction_name} 
 optional_register_description = optional_register_stmt [ optional_register_stmt ] ;
 optional_register_stmt = idcode_statement | usercode_statement ;
 idcode_statement = "attribute" "IDCODE_REGISTER" "of" component_name
-    colon "entity" "is" "&".{quote idcode_register:thirty_two_bit_pattern_list quote} semicolon ;
+    colon "entity" "is" "&".{quote {end_and_start} idcode_register:thirty_two_bit_pattern_list {end_and_start} quote} semicolon ;
 usercode_statement = "attribute" "USERCODE_REGISTER" "of" component_name
-    colon "entity" "is" "&".{quote usercode_register:thirty_two_bit_pattern_list quote} semicolon ;
-thirty_two_bit_pattern_list = (comma).{[@:thirty_two_bit_pattern]} ;
+    colon "entity" "is" "&".{quote {end_and_start} usercode_register:thirty_two_bit_pattern_list {end_and_start} quote} semicolon ;
+thirty_two_bit_pattern_list = ({end_and_start} comma {end_and_start}).{@+:thirty_two_bit_pattern} ;
 
 (* B.8.13 *)
 register_access_description = "attribute" "REGISTER_ACCESS" "of"
