@@ -25,11 +25,6 @@ import bsdl
 
 
 class BsdlSemantics:
-    def map_string(self, ast):
-        parser = bsdl.bsdlParser()
-        ast = parser.parse(''.join(ast), "port_map")
-        return ast
-
     def grouped_port_identification(self, ast):
         parser = bsdl.bsdlParser()
         ast = parser.parse(''.join(ast), "group_table")
