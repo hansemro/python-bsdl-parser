@@ -248,7 +248,7 @@ opcode_description =
     right_paren ;
 opcode_list = ({end_and_start} comma {end_and_start}).{@+:opcode} ;
 opcode = pattern ;
-pattern_list_string = "&".{quote @:opcode_list quote} ;
+pattern_list_string = "&".{quote {end_and_start} @:opcode_list {end_and_start} quote} ;
 instruction_list_string = "&".{quote @:instruction_list quote} ;
 instruction_list = (comma).{[@:instruction_name]} ;
 
