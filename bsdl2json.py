@@ -24,17 +24,11 @@ import sys
 import bsdl
 
 
-class BsdlSemantics:
-    def grouped_port_identification(self, ast):
-        parser = bsdl.bsdlParser()
-        ast = parser.parse(''.join(ast), "group_table")
-        return ast
-
 def main(filename):
     with open(filename) as f:
         text = f.read()
         parser = bsdl.bsdlParser()
-        ast = parser.parse(text, "bsdl_description", semantics=BsdlSemantics(), parseinfo=False)
+        ast = parser.parse(text, "bsdl_description", parseinfo=False)
         print(json.dumps(ast.asjson()))
 
 
