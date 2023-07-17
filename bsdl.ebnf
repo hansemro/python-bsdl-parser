@@ -249,8 +249,8 @@ opcode_description =
 opcode_list = ({end_and_start} comma {end_and_start}).{@+:opcode} ;
 opcode = pattern ;
 pattern_list_string = "&".{quote {end_and_start} @:opcode_list {end_and_start} quote} ;
-instruction_list_string = "&".{quote @:instruction_list quote} ;
-instruction_list = (comma).{[@:instruction_name]} ;
+instruction_list_string = "&".{quote {end_and_start} @:instruction_list {end_and_start} quote} ;
+instruction_list = ({end_and_start} comma {end_and_start}).{@:instruction_name} ;
 
 (* B.8.12 *)
 optional_register_description = optional_register_stmt [ optional_register_stmt ] ;
