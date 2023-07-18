@@ -299,10 +299,17 @@ reset_length = integer ;
 boundary_register_segments = { boundary_register_segment }+ ;
 boundary_register_segment = "attribute" "BOUNDARY_SEGMENT" "of"
     component_name colon "entity" "is" boundary_segment:boundary_segment_string semicolon ;
-boundary_segment_string = "&".{quote (comma).{[@+:boundary_segment_list]} quote} ;
-boundary_segment_list = segment_name:boundary_segment_name
+boundary_segment_string = "&".{quote ({end_and_start} comma {end_and_start}).{@+:boundary_segment_list} quote} ;
+boundary_segment_list =
+    segment_name:boundary_segment_name
+    {end_and_start}
     left_bracket segment_length:boundary_segment_length right_bracket
-    left_paren cell_table:cell_table right_paren ;
+    {end_and_start}
+    left_paren
+    {end_and_start}
+    cell_table:cell_table
+    {end_and_start}
+    right_paren ;
 boundary_segment_name = vhdl_identifier ;
 boundary_segment_length = integer ;
 cell_table = ({end_and_start} comma {end_and_start}).{@:cell_entry} ;
