@@ -291,7 +291,7 @@ boundary_length_stmt = "attribute" "BOUNDARY_LENGTH" "of"
 register_length = integer ;
 boundary_register_stmt = "attribute" "BOUNDARY_REGISTER" "of"
     component_name colon "entity" "is" @:cell_table_string semicolon ;
-cell_table_string = "&".{quote @:cell_table quote} ;
+cell_table_string = "&".{quote {end_and_start} @:cell_table {end_and_start} quote} ;
 assembled_boundary_length_stmt = "attribute" "ASSEMBLED_BOUNDARY_LENGTH" "of"
     component_name colon "entity" "is"
     left_paren reset_length:reset_length comma boundary_length:register_length right_paren semicolon ;
@@ -305,11 +305,29 @@ boundary_segment_list = segment_name:boundary_segment_name
     left_paren cell_table:cell_table right_paren ;
 boundary_segment_name = vhdl_identifier ;
 boundary_segment_length = integer ;
-cell_table = (comma).{[@:cell_entry]} ;
-cell_entry = cell_number:cell_number left_paren cell_info:cell_info right_paren ;
+cell_table = ({end_and_start} comma {end_and_start}).{@:cell_entry} ;
+cell_entry = cell_number:cell_number
+    left_paren
+    {end_and_start}
+    cell_info:cell_info
+    {end_and_start}
+    right_paren ;
 cell_number = integer ;
-cell_info = cell_spec:cell_spec [ comma input_or_disable_spec:input_or_disable_spec ] ;
-cell_spec = cell_name:cell_name comma port_id:port_id_or_null comma function:function comma safe_bit:safe_bit ;
+cell_info = cell_spec:cell_spec [ {end_and_start} comma {end_and_start} input_or_disable_spec:input_or_disable_spec ] ;
+cell_spec =
+    cell_name:cell_name
+    {end_and_start}
+    comma
+    {end_and_start}
+    port_id:port_id_or_null
+    {end_and_start}
+    comma
+    {end_and_start}
+    function:function
+    {end_and_start}
+    comma
+    {end_and_start}
+    safe_bit:safe_bit ;
 cell_name = vhdl_identifier ;
 port_id_or_null = port_id | asterisk ;
 function = "INPUT" | "OUTPUT2" | "OUTPUT3" | "CONTROL" |
@@ -318,7 +336,16 @@ safe_bit = "0" | "1" | "X" ;
 input_or_disable_spec = input_spec | disable_spec ;
 input_spec = "EXTERN0" | "EXTERN1" | "PULL0" | "PULL1" | "OPEN0" |
     "OPEN1" | "KEEPER" | "OPENX" | "EXPECT1" | "EXPECT0" ;
-disable_spec = control_cell:ccell comma disable_value:disable_value comma disable_result:disable_result ;
+disable_spec =
+    control_cell:ccell
+    {end_and_start}
+    comma
+    {end_and_start}
+    disable_value:disable_value
+    {end_and_start}
+    comma
+    {end_and_start}
+    disable_result:disable_result ;
 ccell = integer ;
 disable_value = "0" | "1" ;
 disable_result = "WEAK0" | "WEAK1" | "PULL0" | "PULL1" | "OPEN0" | "OPEN1" |
