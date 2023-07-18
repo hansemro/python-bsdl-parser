@@ -360,24 +360,33 @@ disable_result = "WEAK0" | "WEAK1" | "PULL0" | "PULL1" | "OPEN0" | "OPEN1" |
 
 (* B.8.15 *)
 runbist_description = "attribute" "RUNBIST_EXECUTION" "of" component_name
-    colon "entity" "is" "&".{quote runbist_spec quote} semicolon ;
-runbist_spec = wait_spec comma pin_state comma signature_spec ;
-wait_spec = "WAIT_DURATION" left_paren duration_spec right_paren ;
-duration_spec = clock_cycles_list | time_and_clocks ;
-time_and_clocks = time [ comma clock_cycles_list ] ;
-clock_cycles_list = (comma).{[clock_cycles]} ;
+    colon "entity" "is" "&".{quote {end_and_start} @:runbist_spec {end_and_start} quote} semicolon ;
+runbist_spec =
+    wait_spec:wait_spec
+    {end_and_start}
+    comma
+    {end_and_start}
+    pin_state:pin_state
+    {end_and_start}
+    comma
+    {end_and_start}
+    signature_spec:signature_spec ;
+wait_spec = "WAIT_DURATION" {end_and_start} left_paren {end_and_start} @:duration_spec {end_and_start} right_paren ;
+time_and_clocks = time:time [{end_and_start} comma {end_and_start} clock_cycles_list:clock_cycles_list] ;
+duration_spec = (>time_and_clocks) | clock_cycles_list:clock_cycles_list ;
+clock_cycles_list = ({end_and_start} comma {end_and_start}).{@+:clock_cycles} ;
 time = real ;
-clock_cycles = port_id integer ;
-pin_state = "OBSERVING" condition "AT_PINS" ;
+clock_cycles = port_id:port_id {end_and_start} num_cycles:integer ;
+pin_state = "OBSERVING" {end_and_start} @:condition {end_and_start} "AT_PINS" ;
 condition = "HIGHZ" | "BOUNDARY" ;
-signature_spec = "EXPECT_DATA" det_pattern ;
+signature_spec = "EXPECT_DATA" {end_and_start} @:det_pattern ;
 det_pattern = { bit }+ ;
 bit = "0" | "1" ;
 
 (* B.8.16 *)
 intest_description = "attribute" "INTEST_EXECUTION" "of" component_name
-    colon "entity" "is" "&".{quote intest_spec quote} semicolon ;
-intest_spec = wait_spec comma pin_state ;
+    colon "entity" "is" "&".{quote {end_and_start} @:intest_spec {end_and_start} quote} semicolon ;
+intest_spec = wait_spec:wait_spec {end_and_start} comma {end_and_start} pin_state:pin_state ;
 
 (* B.8.17 *)
 system_clock_description = "attribute" "SYSCLOCK_REQUIREMENTS"
